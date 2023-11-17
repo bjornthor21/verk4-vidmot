@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- MediaPipe Tasks-Vision Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" crossorigin="anonymous"></script>
+    <!-- Your JavaScript File (if separate) -->
+    <script src="path_to_your_script.js"></script>
+</head>
+<body>
+    <!-- Your HTML content goes here -->
+    <!-- Example: Video element for gesture recognition -->
+    <video id="video" width="640" height="480" autoplay></video>
+    <div id="results"></div>
+
+    <script>
+        async function setupWebcam() {
+        const videoElement = document.getElementById('video');
+            // Request access to the webcam
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+
+                // Wait for the video to load and set its size
+                return new Promise((resolve) => {
+                    videoElement.onloadedmetadata = () => {
+                        resolve(videoElement);
+                    };
+                });
+            } catch (e) {
+                console.error('Webcam error:', e);
+                alert('Could not access the webcam. Please check your webcam settings and permissions.');
+            }
+        }
+        async function setupGestureRecognizer() {
+        // Create a vision task resolver
+        await setupWebcam();
+
+        const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+        );
+
+        // Configure the gesture recognizer
+        const gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+            baseOptions: {
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task"
+            },
+            numHands: 2 // Adjust according to your requirements
+        });
+
+        // Set the recognizer to video mode
+        await gestureRecognizer.setOptions({ runningMode: "video" });
+
+        // Initialize video processing
+        processVideo(gestureRecognizer);
+    }
+
+    function processVideo(gestureRecognizer) {
+        const videoElement = document.getElementById("video");
+        let lastVideoTime = -1;
+
+        async function renderLoop() {
+            if (videoElement.currentTime !== lastVideoTime) {
+                const gestureRecognitionResult = await gestureRecognizer.recognizeForVideo(videoElement);
+                // Process and display results
+                displayResults(gestureRecognitionResult);
+                lastVideoTime = videoElement.currentTime;
+            }
+            requestAnimationFrame(renderLoop);
+        }
+
+        renderLoop();
+    }
+
+    function displayResults(gestureRecognitionResult) {
+        // Display the results in your preferred way
+        // Example: Updating the 'results' div with gesture information
+        const resultsElement = document.getElementById("results");
+        resultsElement.textContent = JSON.stringify(gestureRecognitionResult, null, 2);
+    }
+
+    // Start the setup
+    setupGestureRecognizer();
+    </script>
+</body>
+</html>
