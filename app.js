@@ -1,3 +1,5 @@
+import * as handPoseDetection from 'tensorFlow';
+
 async function main() {
     // Select the model
     const model = handPoseDetection.SupportedModels.MediaPipeHands;

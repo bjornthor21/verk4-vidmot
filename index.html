@@ -3,11 +3,18 @@
 <head>
     <title>gestures</title>
     <!-- Import TensorFlow.js and MediaPipe Hands library -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script> 
+
+    <script type="importmap">
+      {
+        "imports": {
+          "tensorFlow": "https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection",
+          "mediapipes": "https://cdn.jsdelivr.net/npm/@mediapipe/hands"
+        }
+      }
+    </script>
 </head>
 <body>
     <video id="video" width="640" height="480" autoplay></video>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
