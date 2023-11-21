@@ -1,50 +1,104 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
-    <title>h</title>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script> -->
+    <title>Hand Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
 </head>
 <body>
     <video id="video" width="640" height="480" autoplay></video>
     <script>
       async function main() {
-      // Select the model
-      const model = handPoseDetection.SupportedModels.MediaPipeHands;
-      const detectorConfig = {
-          runtime: 'mediapipe', // or 'tfjs'
-          modelType: 'full'    // or 'lite'
-      };
+        // Load the handpose model.
+        const model = await handpose.load();
 
-      // Create a detector
-      const detector = await handPoseDetection.createDetector(model, detectorConfig);
+        // Start video stream
+        const video = document.getElementById('video');
+        navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+            video.srcObject = stream;
+        });
 
-      // Start video stream
-      const video = document.getElementById('video');
-      navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
-          video.srcObject = stream;
-      });
+        video.onloadedmetadata = () => {
+            detectHands(model, video);
+        };
+      }
 
-      video.onloadedmetadata = () => {
-          detectHands(detector, video);
-      };
-  }
+      async function detectHands(model, video) {
+        const predictions = await model.estimateHands(video);
 
-  async function detectHands(detector, video) {
-      const hands = await detector.estimateHands(video);
-      
-      // Log detected hands
-      console.log(hands);
+        if (predictions.length > 0) {
+            console.log(predictions);
+            let procent = document.getElementById("procent");
+            procent.textContent = predictions[0].handInViewConfidence;
 
-      // Call detectHands again to create a loop
-      requestAnimationFrame(() => {
-          detectHands(detector, video);
-      });
-  }
+            // Analyze the predictions to determine gestures
+            const gesture = analyzeGestures(predictions[0].landmarks);
+            console.log(gesture);  // Log the detected gesture
+        }
 
-  main();
+        requestAnimationFrame(() => {
+            detectHands(model, video);
+        });
+    }
 
+      function analyzeGestures(landmarks) {
+          const isIndexFingerUp = landmarks[8][1] < landmarks[6][1]; // y-coordinate comparison
+
+          if (isIndexFingerUp) {
+              return "Index Finger Up";
+          }
+
+          return "Unknown Gesture";
+      }
+
+      main();
+    </script>
+    <h1 id="procent"></h1>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MediaPipe Gesture Recognition</title>
+    <!-- Include the MediaPipe tasks-vision library -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>MediaPipe Gesture Recognition Demo</h1>
+    <video id="video" width="640" height="480" autoplay muted></video>
+    <script>
+      async function main() {
+          // Access the webcam stream
+          const videoElement = document.getElementById('video');
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          videoElement.srcObject = stream;
+
+          // Create task for gesture recognition
+          const vision = await FilesetResolver.forVisionTasks(
+              "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+          );
+          const gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
+              baseOptions: {
+                  modelAssetPath: "https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task"
+              },
+              numHands: 2
+          });
+
+          // Process the video stream
+          videoElement.addEventListener('loadeddata', async () => {
+              while (true) {
+                  const results = await gestureRecognizer.recognizeForVideo(videoElement);
+                  if (results) {
+                      // Handle gesture recognition results here
+                      console.log(results);
+                  }
+                  await new Promise(requestAnimationFrame);
+              }
+          });
+      }
+
+      main();
     </script>
 </body>
 </html>
