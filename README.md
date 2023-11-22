@@ -1,4 +1,4 @@
-# verk4-vidmot
+# Verkefni 4
 
 1. [Touch](https://bjornthor21.github.io/verk4-vidmot/touch.html)
 
