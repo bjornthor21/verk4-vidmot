@@ -7,8 +7,7 @@
     <script type="importmap">
       {
         "imports": {
-          "three": "https://unpkg.com/three@v0.158.0/build/three.module.js",
-          "OrbitControls": "https://unpkg.com/three@v0.158.0/examples/jsm/controls/OrbitControls.js"
+          "three": "https://unpkg.com/three@v0.158.0/build/three.module.js"
         }
       }
     </script>
@@ -16,19 +15,21 @@
 
 <body>
     <div>
-        <button id='webcamButton'>ENABLE WEBCAM</button>
-        <div style='position: relative;'>
-            <video id='webcam' autoplay></video>
-            <canvas id='output_canvas' width='480' height='360'
-                style='position: absolute; left: 0px; top: 0px;'></canvas>
-            <h1 id='gesture_output'>
-            <h2>X <span id='x_output'></span></h2>
-            <h2>Y <span id='y_output'></span></h2>
-        </div>
-    </div>
+      <button id='webcamButton'>ENABLE WEBCAM</button>
+      <div style='position: relative;'>
+          <video id='webcam' autoplay style='transform: scaleX(-1);'></video>
+          <canvas id='output_canvas' width='480' height='360' style='position: absolute; left: 0px; top: 0px; transform: scaleX(-1);'></canvas>
+          <h1 id='gesture_output'></h1>
+          <h2>X <span id='x_output'></span></h2>
+          <h2>Y <span id='y_output'></span></h2>
+      </div>
+  </div>
 
     <script type='module'>
         import { GestureRecognizer, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3';
+        import * as THREE from 'three';
+
+
         let gestureRecognizer;
         let runningMode = 'IMAGE';
         let enableWebcamButton;
@@ -36,47 +37,15 @@
         const videoWidth = '380px';
         const videoHeight = '292px';
 
-        import * as THREE from 'three';
-        import { OrbitControls } from 'OrbitControls';
-
-
         const createGestureRecognizer = async () => {
-          const scene = new THREE.Scene();
-          const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-          const renderer = new THREE.WebGLRenderer();
-          renderer.setSize( window.innerWidth, window.innerHeight );
-          document.body.appendChild( renderer.domElement );
-
-          const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-          const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-          const cube = new THREE.Mesh( geometry, material );
-          scene.add( cube );
-
-          camera.position.z = 5;
-
-          function animate() {
-            requestAnimationFrame( animate );
-
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-
-            renderer.render( scene, camera );
-          }
-
-          animate();
-
-
-
-
-
+         
             const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm');
             gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
                 baseOptions: {
                     modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
                     delegate: 'GPU'
                 },
-                runningMode: runningMode
+                runningMode: runningMode,
             });
         };
         createGestureRecognizer();
@@ -114,6 +83,7 @@
         }
         let lastVideoTime = -1;
         let results = undefined;
+
         async function predictWebcam() {
             const webcamElement = document.getElementById('webcam');
             // Now let's start detecting the stream.
@@ -150,7 +120,7 @@
                 }
             }
 
-            canvasCtx.restore();
+            // canvasCtx.restore();
             if (results.gestures.length > 0) {
                 gestureOutput.style.display = 'block';
                 gestureOutput.style.width = videoWidth;
@@ -158,7 +128,6 @@
                 
                 parseFloat(xOutput.innerText = results.landmarks[0][0].x.toFixed(2));
                 parseFloat(yOutput.innerText = results.landmarks[0][0].y.toFixed(2));
-                
                 console.log(gestureOutput.innerText)
             }
             else {
@@ -169,6 +138,41 @@
                 window.requestAnimationFrame(predictWebcam);
             }
         }
+
+
+        const scene = new THREE.Scene();
+          const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+          const renderer = new THREE.WebGLRenderer();
+          renderer.setSize( window.innerWidth/2, window.innerHeight/2, false );
+          document.body.appendChild( renderer.domElement );
+
+          const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+          const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+          const cube = new THREE.Mesh( geometry, material );
+          scene.add( cube );
+
+          camera.position.z = 5;
+
+          function animate() {
+            requestAnimationFrame( animate );
+            
+            if(gestureOutput.innerText == "Victory"){
+              cube.rotation.x += 0.01;
+              cube.rotation.y += 0.01;
+            }
+            else if(gestureOutput.innerText == "Closed_Fist"){
+              cube.rotation.x -= 0.01;
+              cube.rotation.y -= 0.01;
+            }
+            //else if(gestureOutput.innerText == "None"){
+              
+            // }
+            
+
+            renderer.render( scene, camera );
+          }
+          animate();
     </script>
 
 
