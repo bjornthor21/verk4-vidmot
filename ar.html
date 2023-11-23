@@ -17,7 +17,8 @@
       <button id='webcamButton'>ENABLE WEBCAM</button>
       <div>
           <video id='webcam' autoplay></video>
-          <canvas id='output_canvas' width='480' height='360'></canvas>
+          <canvas id="threeCanvas" style="position: absolute; top: 0; left: 0; transform: scaleX(-1);"></canvas>
+          <canvas id='output_canvas' style="position: absolute; left: 0px; top: 0px; transform: scaleX(-1)" width='480' height='360'></canvas>
           <h1 id='gesture_output'></h1>
           <h2>X <span id='x_output'></span></h2>
           <h2>Y <span id='y_output'></span></h2>
@@ -101,12 +102,12 @@
                 }
             };
 
-    // Activate the webcam stream.
-    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-        video.srcObject = stream;
-        video.addEventListener('loadeddata', predictWebcam);
-    });
-}
+            // Activate the webcam stream.
+            navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+                video.srcObject = stream;
+                video.addEventListener('loadeddata', predictWebcam);
+            });
+        }
         let lastVideoTime = -1;
         let results = undefined;
 
@@ -186,13 +187,17 @@
             directionalLight.position.set(1, 1, 1);
             scene.add(directionalLight);
 
+            const threeCanvas = document.getElementById('threeCanvas');
+
             const renderer = new THREE.WebGLRenderer({
                 alpha: true,
                 preserveDrawingBuffer: true,
-                canvasElement: canvasElement,
+                canvas: threeCanvas,
                 context: gl
             });
             renderer.autoClear = false;
+
+            renderer.setSize(videoWidth, videoHeight);
 
             const camera = new THREE.PerspectiveCamera();
             camera.matrixAutoUpdate = false;
@@ -208,7 +213,9 @@
 
         const onXRFrame = (time, frame) => {
             session.requestAnimationFrame(onXRFrame);
+            
             gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer)
+
             const pose = frame.getViewerPose(referenceSpace);
 
             if (pose) {
@@ -220,6 +227,8 @@
                 camera.matrix.fromArray(view.transform.matrix)
                 camera.projectionMatrix.fromArray(view.projectionMatrix);
                 camera.updateMatrixWorld(true);
+
+                renderer.render(scene, camera)
             }
         }
         session.requestAnimationFrame(onXRFrame);
