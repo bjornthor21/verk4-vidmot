@@ -16,7 +16,7 @@
     <div>
       <button id='webcamButton'>ENABLE WEBCAM</button>
       <div style='position: relative;'>
-          <!-- <video id='webcam' autoplay style='transform: scaleX(-1);'></video> -->
+          <video id='webcam' autoplay style='transform: scaleX(-1);'></video>
           <canvas id='output_canvas' width='480' height='360' style='position: absolute; left: 0px; top: 0px; transform: scaleX(-1);'></canvas>
           <h1 id='gesture_output'></h1>
           <h2>X <span id='x_output'></span></h2>
@@ -82,24 +82,24 @@
         // }
 
         function enableCam(event) {
-    if (!gestureRecognizer) {
-        alert('Please wait for gestureRecognizer to load');
-        return;
-    }
-    if (webcamRunning === true) {
-        webcamRunning = false;
-    }
-    else {
-        webcamRunning = true;
-    }
+            if (!gestureRecognizer) {
+                alert('Please wait for gestureRecognizer to load');
+                return;
+            }
+            if (webcamRunning === true) {
+                webcamRunning = false;
+            }
+            else {
+                webcamRunning = true;
+            }
 
-    // getUsermedia parameters.
-    const constraints = {
-        video: {
-            // Use the rear camera if available, otherwise default to any available camera
-            facingMode: { exact: "user" }
-        }
-    };
+            // getUsermedia parameters.
+            const constraints = {
+                video: {
+                    // Use the rear camera if available, otherwise default to any available camera
+                    facingMode: { exact: "user" }
+                }
+            };
 
     // Activate the webcam stream.
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
