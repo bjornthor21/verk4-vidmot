@@ -46,29 +46,61 @@
         const yOutput = document.getElementById('y_output');
 
         enableWebcamButton = document.getElementById('webcamButton');
-        enableWebcamButton.addEventListener('click', enableCam);
+        enableWebcamButton.addEventListener('touchstart', enableCam);
+
+        // function enableCam(event) {
+        //     if (!gestureRecognizer) {
+        //         alert('Please wait for gestureRecognizer to load');
+        //         return;
+        //     }
+        //     if (webcamRunning === true) {
+        //         webcamRunning = false;
+        //     }
+        //     else {
+        //         webcamRunning = true;
+        //     }
+        //     // getUsermedia parameters.
+        //     const constraints = {
+        //         video: true
+        //     };
+        //     // Activate the webcam stream.
+        //     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+        //         video.srcObject = stream;
+        //         video.addEventListener('loadeddata', predictWebcam);
+        //     });
+        // }
 
         function enableCam(event) {
-            if (!gestureRecognizer) {
-                alert('Please wait for gestureRecognizer to load');
-                return;
-            }
-            if (webcamRunning === true) {
-                webcamRunning = false;
-            }
-            else {
-                webcamRunning = true;
-            }
-            // getUsermedia parameters.
-            const constraints = {
-                video: true
-            };
-            // Activate the webcam stream.
-            navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-                video.srcObject = stream;
-                video.addEventListener('loadeddata', predictWebcam);
-            });
-        }
+          if (!gestureRecognizer) {
+              alert('Please wait for gestureRecognizer to load');
+              return;
+          }
+          if (webcamRunning === true) {
+              webcamRunning = false;
+              video.srcObject.getTracks().forEach(track => track.stop()); // Stop the camera
+              return;
+          }
+          webcamRunning = true;
+          
+          // getUserMedia parameters.
+          const constraints = {
+              audio: false, // Disable audio to optimize performance
+              video: {
+                  facingMode: "user", // Use the front camera on mobile devices
+              }
+          };
+
+          // Activate the webcam stream.
+          navigator.mediaDevices.getUserMedia(constraints)
+          .then(function (stream) {
+              video.srcObject = stream;
+              video.addEventListener('loadeddata', predictWebcam);
+          })
+          .catch(function (err) {
+              console.log("An error occurred: " + err);
+              alert("An error occurred: " + err);
+          });
+      }
         let lastVideoTime = -1;
         let results = undefined;
 
