@@ -4,13 +4,14 @@
     <meta charset='UTF-8'>
     <title>Mediapipe Hand Gesture Recognizer</title>
 
-    <script type="importmap">
+    <!-- <script type="importmap">
       {
         "imports": {
           "three": "https://unpkg.com/three@v0.158.0/build/three.module.js"
         }
       }
-    </script>
+    </script> -->
+    <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
 </head>
 <body>
     <div>
@@ -27,8 +28,7 @@
   <button onclick="activateXR()">Activate AR</button>
     <script type="module">
         import { GestureRecognizer, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3';
-        import * as THREE from 'three';
-
+        // import * as THREE from 'three';
 
         let gestureRecognizer;
         let runningMode = 'IMAGE';
@@ -167,9 +167,7 @@
         }
 
     async function activateXR() {
-    const canvas = document.createElement("canvas");
-    document.body.appendChild(canvas);
-    const gl = canvas.getContext("webgl", {xrCompatible: true});
+    const gl = canvasElement.getContext("webgl", {xrCompatible: true});
   
     const scene = new THREE.Scene();
 
@@ -193,7 +191,7 @@
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       preserveDrawingBuffer: true,
-      canvas: canvas,
+      canvas: canvasElement,
       context: gl
     });
     renderer.autoClear = false;
@@ -214,13 +212,6 @@
     const viewerSpace = await session.requestReferenceSpace('viewer');
     const hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
 
-    session.addEventListener("select", (event) => {
-      if (model) {
-        const clone = model.clone();
-        clone.position.copy(reticle.position);
-        scene.add(clone);
-      }
-    });
     const onXRFrame = (time, frame) => {
       session.requestAnimationFrame(onXRFrame);
 
