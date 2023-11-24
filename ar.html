@@ -77,14 +77,12 @@
           }
           if (webcamRunning === true) {
               webcamRunning = false;
-              video.srcObject.getTracks().forEach(track => track.stop()); // Stop the camera
               return;
           }
           webcamRunning = true;
           
           // getUserMedia parameters.
           const constraints = {
-              audio: false, // Disable audio to optimize performance
               video: {
                   facingMode: "user", // Use the front camera on mobile devices
               }
