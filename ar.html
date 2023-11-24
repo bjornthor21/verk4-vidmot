@@ -14,16 +14,14 @@
     <!-- <script src="https://unpkg.com/three@0.126.0/build/three.js"></script> -->
 </head>
 <body>
+    <button id='webcamButton'>ENABLE WEBCAM</button>
     <div>
-      <button id='webcamButton'>ENABLE WEBCAM</button>
-      <div>
-          <video id='webcam' autoplay></video>
-          <canvas id='output_canvas' style="position: absolute; left: 0px; top: 0px; transform: scaleX(-1)" width='480' height='360'></canvas>
-          <h1 id='gesture_output'></h1>
-          <h2>X <span id='x_output'></span></h2>
-          <h2>Y <span id='y_output'></span></h2>
-      </div>
-  </div>
+        <video id='webcam' autoplay></video>
+        <canvas id='output_canvas' style="position: absolute; left: 0px; top: 0px; transform: scaleX(-1)" width='480' height='360'></canvas>
+        <h1 id='gesture_output'></h1>
+        <h2>X <span id='x_output'></span></h2>
+        <h2>Y <span id='y_output'></span></h2>
+    </div>
   <button onclick="activateXR()">Activate AR</button>
     <script type="module">
         import { GestureRecognizer, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3';
