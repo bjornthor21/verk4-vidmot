@@ -41,7 +41,6 @@
 
         const video = document.getElementById('webcam');
         const canvasElement = document.getElementById('output_canvas');
-        // const canvasCtx = canvasElement.getContext("2d");
         const gestureOutput = document.getElementById('gesture_output');
         const xOutput = document.getElementById('x_output');
         const yOutput = document.getElementById('y_output');
@@ -62,15 +61,13 @@
               return;
           }
           webcamRunning = true;
-          
-          // getUserMedia parameters.
+
           const constraints = {
               video: {
-                  facingMode: "user", // Use the front camera on mobile devices
+                  facingMode: "user",
               }
           };
 
-          // Activate the webcam stream.
           navigator.mediaDevices.getUserMedia(constraints)
           .then(function (stream) {
               video.srcObject = stream;
@@ -86,7 +83,6 @@
 
         async function predictWebcam() {
             const webcamElement = document.getElementById('webcam');
-            // Now let's start detecting the stream.
             if (runningMode === 'IMAGE') {
                 runningMode = 'VIDEO';
                 await gestureRecognizer.setOptions({ runningMode: 'VIDEO' });
@@ -99,28 +95,6 @@
                 results = gestureRecognizer.recognizeForVideo(video, nowInMs);
             }
 
-            // canvasCtx.save();
-            // canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            // const drawingUtils = new DrawingUtils(canvasCtx);
-            // canvasElement.style.height = videoHeight;
-            // webcamElement.style.height = videoHeight;
-            // canvasElement.style.width = videoWidth;
-            // webcamElement.style.width = videoWidth;
-
-            // if (results.landmarks) {
-            //     for (const landmarks of results.landmarks) {
-            //         drawingUtils.drawConnectors(landmarks, GestureRecognizer.HAND_CONNECTIONS, {
-            //             color: '#00FF00',
-            //             lineWidth: 5
-            //         });
-            //         drawingUtils.drawLandmarks(landmarks, {
-            //             color: '#FF0000',
-            //             lineWidth: 2
-            //         });
-            //     }
-            // }
-
-            // canvasCtx.restore();
             if (results.gestures.length > 0) {
                 gestureOutput.style.display = 'block';
                 gestureOutput.style.width = videoWidth;
@@ -141,15 +115,11 @@
 
 
         async function activateXR() {
-          // Add a canvas element and initialize a WebGL context that is compatible with WebXR.
           const canvas = canvasElement;
-          // document.body.appendChild(canvas);
           const gl = canvas.getContext("webgl", {xrCompatible: true});;
 
-          // Create a scene.
           const scene = new THREE.Scene();
 
-          // The cube will have a different color on each side.
           const materials = [
             new THREE.MeshBasicMaterial({color: 0xff0000}),
             new THREE.MeshBasicMaterial({color: 0x0000ff}),
@@ -159,12 +129,10 @@
             new THREE.MeshBasicMaterial({color: 0xffff00})
           ];
 
-          // Create the cube and add it to the demo scene.
           const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
           cube.position.set(1, 1, 1);
           scene.add(cube);
 
-          // Set up the WebGLRenderer.
           const renderer = new THREE.WebGLRenderer({
             alpha: true,
             preserveDrawingBuffer: true,
@@ -173,20 +141,16 @@
           });
           renderer.autoClear = false;
 
-          // Camera setup.
           const camera = new THREE.PerspectiveCamera();
           camera.matrixAutoUpdate = false;
 
-          // Initialize a WebXR session.
           const session = await navigator.xr.requestSession("immersive-ar");
           session.updateRenderState({
             baseLayer: new XRWebGLLayer(session, gl)
           });
 
-          // Create a reference space.
           const referenceSpace = await session.requestReferenceSpace('local');
 
-          // Render loop.
           const onXRFrame = (time, frame) => {
             session.requestAnimationFrame(onXRFrame);
             gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
