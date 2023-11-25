@@ -10,7 +10,7 @@
       <button id='webcamButton'>ENABLE WEBCAM</button>
       <div style='position: relative;'>
           <video id='webcam' autoplay style='transform: scaleX(-1);'></video>
-          <canvas id='output_canvas' width='480' height='360' style='position: absolute; left: 0px; top: 0px; transform: scaleX(-1);'></canvas>
+          <canvas id='output_canvas' style='position: absolute; left: 0px; top: 0px; transform: scaleX(-1);'></canvas>
           <h1 id='gesture_output'></h1>
           <h2>X <span id='x_output'></span></h2>
           <h2>Y <span id='y_output'></span></h2>
@@ -143,7 +143,7 @@
         async function activateXR() {
           // Add a canvas element and initialize a WebGL context that is compatible with WebXR.
           const canvas = canvasElement;
-          document.body.appendChild(canvas);
+          // document.body.appendChild(canvas);
           const gl = canvas.getContext("webgl", {xrCompatible: true});;
 
           // Create a scene.
