@@ -47,9 +47,13 @@
         const yOutput = document.getElementById('y_output');
 
         enableWebcamButton = document.getElementById('webcamButton');
-        enableWebcamButton.addEventListener('touchstart','click', () => {
+        enableWebcamButton.addEventListener('touchstart', () => {
           enableCam();
           activateXR();
+        });
+
+        enableWebcamButton.addEventListener('click', () => {
+          alert('must open in mobile so Ar Object renders')
         });
 
         function enableCam(event) {
