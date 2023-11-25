@@ -41,13 +41,16 @@
 
         const video = document.getElementById('webcam');
         const canvasElement = document.getElementById('output_canvas');
-        const canvasCtx = canvasElement.getContext('2d');
+        const canvasCtx = canvasElement.getContext("webgl", {xrCompatible: true});
         const gestureOutput = document.getElementById('gesture_output');
         const xOutput = document.getElementById('x_output');
         const yOutput = document.getElementById('y_output');
 
         enableWebcamButton = document.getElementById('webcamButton');
-        enableWebcamButton.addEventListener('touchstart', enableCam, activateXR);
+        enableWebcamButton.addEventListener('touchstart','click', () => {
+          enableCam();
+          activateXR();
+        });
 
         function enableCam(event) {
           if (!gestureRecognizer) {
@@ -140,8 +143,8 @@
         async function activateXR() {
           // Add a canvas element and initialize a WebGL context that is compatible with WebXR.
           const canvas = canvasElement;
-          document.body.appendChild(canvas);
-          const gl = canvas.getContext("webgl", {xrCompatible: true});
+          // document.body.appendChild(canvas);
+          const gl = canvasCtx;
 
           // Create a scene.
           const scene = new THREE.Scene();
