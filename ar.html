@@ -49,35 +49,35 @@
         enableWebcamButton = document.getElementById('webcamButton');
         enableWebcamButton.addEventListener('touchstart', activateXR);
 
-      //   function enableCam(event) {
-      //     if (!gestureRecognizer) {
-      //         alert('Please wait for gestureRecognizer to load');
-      //         return;
-      //     }
-      //     if (webcamRunning === true) {
-      //         webcamRunning = false;
-      //         return;
-      //     }
-      //     webcamRunning = true;
+        function enableCam(event) {
+          if (!gestureRecognizer) {
+              alert('Please wait for gestureRecognizer to load');
+              return;
+          }
+          if (webcamRunning === true) {
+              webcamRunning = false;
+              return;
+          }
+          webcamRunning = true;
           
-      //     // getUserMedia parameters.
-      //     const constraints = {
-      //         video: {
-      //             facingMode: "user", // Use the front camera on mobile devices
-      //         }
-      //     };
+          // getUserMedia parameters.
+          const constraints = {
+              video: {
+                  facingMode: "user", // Use the front camera on mobile devices
+              }
+          };
 
-      //     // Activate the webcam stream.
-      //     navigator.mediaDevices.getUserMedia(constraints)
-      //     .then(function (stream) {
-      //         video.srcObject = stream;
-      //         video.addEventListener('loadeddata', predictWebcam);
-      //     })
-      //     .catch(function (err) {
-      //         console.log("An error occurred: " + err);
-      //         alert("An error occurred: " + err);
-      //     });
-      // }
+          // Activate the webcam stream.
+          navigator.mediaDevices.getUserMedia(constraints)
+          .then(function (stream) {
+              video.srcObject = stream;
+              video.addEventListener('loadeddata', predictWebcam);
+          })
+          .catch(function (err) {
+              console.log("An error occurred: " + err);
+              alert("An error occurred: " + err);
+          });
+      }
       //   let lastVideoTime = -1;
       //   let results = undefined;
 
