@@ -201,6 +201,16 @@
               camera.projectionMatrix.fromArray(view.projectionMatrix);
               camera.updateMatrixWorld(true);
 
+
+            if(gestureOutput.innerText == "Victory"){
+              cube.rotation.x += 0.01;
+              cube.rotation.y += 0.01;
+            }
+            else if(gestureOutput.innerText == "Closed_Fist"){
+              cube.rotation.x -= 0.01;
+              cube.rotation.y -= 0.01;
+            }
+
               renderer.render(scene, camera);
             }
           };
